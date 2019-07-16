@@ -1,31 +1,26 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <div class="left-component">
+    <icon name="baseline-list-24px" scale="500"></icon></div>
+    <div class="func-pannel">456</div>
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view />
+    <router-view /> -->
   </div>
 </template>
 
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
+.left-component {
+  background-color: blue;
+  height: 100%;
+  width: 40%;
+  position: fixed;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.func-pannel {
+  background-color: red;
+  height: 100%;
 }
 </style>
