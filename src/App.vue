@@ -47,7 +47,8 @@ export default {
     secondes: 0,
     time: 0,
     timer: null,
-    callback: null
+    callback: null,
+    isTakeBreak: false
   }),
   methods: {
     onClickedItem: function(thingObj, onTimeUpCallback) {
@@ -64,11 +65,15 @@ export default {
             this.time--;
             doingThing.remainTime = this.time;
           } else {
-            this.iconName = "baseline-play_circle_outline-24px";
-            doingThing.isDone = true;
-            this.callback();
-            clearInterval(this.timer);
-            this.reset();
+            if (!this.isTakeBreak) {
+              this.currentThing.title = "Take A Break!";
+              this.callback();
+              this.time = 5 * 60;
+            } else {
+              this.iconName = "baseline-play_circle_outline-24px";
+              clearInterval(this.timer);
+              this.reset();
+            }
           }
           this.currentThing = doingThing;
         }, 1000);

@@ -1,8 +1,8 @@
 <template>
   <div class="center-inline">
     <div>
-      <input type="text" />
-      <input type="button" value="新增" />
+      <input type="text" v-model="todo_value" />
+      <input type="button" value="新增" @click="addToList(todo_value)" />
     </div>
     <div>
       <div>
@@ -49,25 +49,23 @@
 export default {
   name: "ToDoList",
   data: () => ({
+    todo_value: "",
     doingID: 0,
     todo_list: [
       {
         title: "THE FIRST THING TO DO",
         doing: false,
-        remainTime: 1,
-        isDone: false
+        remainTime: 25 * 60
       },
       {
         title: "THE SECOND THING TO DO",
         doing: false,
-        remainTime: 25 * 60,
-        isDone: false
+        remainTime: 25 * 60
       },
       {
         title: "THE THIRD THING TO DO",
         doing: false,
-        remainTime: 25 * 60,
-        isDone: false
+        remainTime: 25 * 60
       }
     ],
     done_list: [{ title: "THE FOURTH THING TO DO" }]
@@ -77,8 +75,7 @@ export default {
       this.todo_list.push({
         title: value,
         doing: false,
-        remainTime: 25 * 60,
-        isDone: false
+        remainTime: 25 * 60
       });
     },
     checkFinished: function() {
