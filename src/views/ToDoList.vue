@@ -49,47 +49,51 @@
 export default {
   name: "ToDoList",
   data: () => ({
-    todo_value: "",
-    anyThingDoing: false,
+    doingID: 0,
     todo_list: [
       {
         title: "THE FIRST THING TO DO",
         doing: false,
-        remainTime: 25
+        remainTime: 1,
+        isDone: false
       },
       {
         title: "THE SECOND THING TO DO",
         doing: false,
-        remainTime: 25
+        remainTime: 25 * 60,
+        isDone: false
       },
       {
         title: "THE THIRD THING TO DO",
         doing: false,
-        remainTime: 25
+        remainTime: 25 * 60,
+        isDone: false
       }
     ],
     done_list: [{ title: "THE FOURTH THING TO DO" }]
   }),
   methods: {
     addToList: function(value) {
-      this.todo_list.push({ title: value });
-      this.todo_value = "";
+      this.todo_list.push({
+        title: value,
+        doing: false,
+        remainTime: 25 * 60,
+        isDone: false
+      });
     },
-    checkFinished: function(id, isDone) {
-      if (isDone) {
-        this.done_list.push(this.todo_list[id]);
-        this.todo_list.splice(id, 1);
-      }
+    checkFinished: function() {
+      this.done_list.push(this.todo_list[this.doingID]);
+      this.todo_list.splice(this.todo_list[this.doingID], 1);
     },
     startToDo: function(index) {
       let listItem = this.todo_list[index];
-      console.log(listItem, this.todo_list[index]);
       listItem.doing = true;
-      this.$emit("onItemClicked", listItem.title, listItem.remainTime);
+      this.$emit("onItemClicked", listItem, this.checkFinished);
     },
     stopToDo: function(index) {
       let listItem = this.todo_list[index];
       listItem.doing = false;
+      this.$emit("onItemPaused");
     }
   }
 };

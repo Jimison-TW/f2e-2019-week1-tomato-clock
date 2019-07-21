@@ -3,7 +3,7 @@
     <div id="sidebar">
       <Clock
         :iconName="iconName"
-        :thingName="doingThing"
+        :thingName="currentThing.title"
         :remainTime="prettyTime"
         @start="start"
         @stop="stop"
@@ -21,7 +21,11 @@
           <TabButton iconName="baseline-settings-20px" tabText="SETTING" />
         </router-link>
       </div>
-      <router-view @onItemClicked="onClickedItem" />
+      <router-view
+        @onItemClicked="onClickedItem"
+        @onItemPaused="stop"
+        :currentThing="currentThing"
+      />
     </div>
   </div>
 </template>
@@ -38,29 +42,35 @@ export default {
   },
   data: () => ({
     iconName: "baseline-play_circle_outline-24px",
-    doingThing: "",
+    currentThing: {},
     minutes: 0,
     secondes: 0,
     time: 0,
-    timer: null
+    timer: null,
+    callback: null
   }),
   methods: {
-    onClickedItem: function(itemName, remainTime) {
-      console.log(itemName, remainTime);
-      this.doingThing = itemName;
-      this.time = remainTime * 60;
+    onClickedItem: function(thingObj, onTimeUpCallback) {
+      this.currentThing = thingObj;
+      this.time = thingObj.remainTime;
+      this.callback = onTimeUpCallback;
     },
     start() {
       if (!this.timer) {
         this.iconName = "baseline-pause_circle_outline-24px";
         this.timer = setInterval(() => {
+          let doingThing = this.currentThing;
           if (this.time > 0) {
             this.time--;
+            doingThing.remainTime = this.time;
           } else {
             this.iconName = "baseline-play_circle_outline-24px";
+            doingThing.isDone = true;
+            this.callback();
             clearInterval(this.timer);
             this.reset();
           }
+          this.currentThing = doingThing;
         }, 1000);
       }
     },
@@ -69,9 +79,11 @@ export default {
       this.iconName = "baseline-play_circle_outline-24px";
       clearInterval(this.timer);
       this.timer = null;
+      this.callback = null;
     },
     reset() {
       this.stop();
+      this.currentThing = {};
       this.time = 0;
       this.secondes = 0;
       this.minutes = 0;
