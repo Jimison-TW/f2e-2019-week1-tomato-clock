@@ -1,31 +1,28 @@
 <template>
   <div id="app">
     <div id="sidebar">
-      <Clock />
+      <Clock
+        :iconName="iconName"
+        :thingName="doingThing"
+        :remainTime="prettyTime"
+        @start="start"
+        @stop="stop"
+      />
     </div>
     <div id="container">
       <div id="content">
         <router-link to="/">
           <TabButton iconName="baseline-list-24px" tabText="TO DO LIST" />
         </router-link>
-        <router-link to="/about">
+        <router-link to="/home">
           <TabButton iconName="baseline-adjust-24px" tabText="ANALYTICS" />
         </router-link>
-        <router-link to="/home">
+        <router-link to="/about">
           <TabButton iconName="baseline-settings-20px" tabText="SETTING" />
         </router-link>
       </div>
-      <div>
-        <input type="text" />
-        <input type="button" value="新增" />
-      </div>
-      <router-view />
+      <router-view @onItemClicked="onClickedItem" />
     </div>
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view /> -->
   </div>
 </template>
 
@@ -38,6 +35,58 @@ export default {
   components: {
     Clock,
     TabButton
+  },
+  data: () => ({
+    iconName: "baseline-play_circle_outline-24px",
+    doingThing: "",
+    minutes: 0,
+    secondes: 0,
+    time: 0,
+    timer: null
+  }),
+  methods: {
+    onClickedItem: function(itemName, remainTime) {
+      console.log(itemName, remainTime);
+      this.doingThing = itemName;
+      this.time = remainTime * 60;
+    },
+    start() {
+      if (!this.timer) {
+        this.iconName = "baseline-pause_circle_outline-24px";
+        this.timer = setInterval(() => {
+          if (this.time > 0) {
+            this.time--;
+          } else {
+            this.iconName = "baseline-play_circle_outline-24px";
+            clearInterval(this.timer);
+            this.reset();
+          }
+        }, 1000);
+      }
+    },
+    stop() {
+      console.log("stop");
+      this.iconName = "baseline-play_circle_outline-24px";
+      clearInterval(this.timer);
+      this.timer = null;
+    },
+    reset() {
+      this.stop();
+      this.time = 0;
+      this.secondes = 0;
+      this.minutes = 0;
+    },
+    setTime(payload) {
+      this.time = payload.minutes * 60 + payload.secondes;
+    }
+  },
+  computed: {
+    prettyTime() {
+      let time = this.time / 60;
+      let minutes = parseInt(time);
+      let secondes = Math.round((time - minutes) * 60);
+      return minutes + ":" + secondes;
+    }
   }
 };
 </script>

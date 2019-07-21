@@ -1,34 +1,46 @@
 <template>
   <div class="center-inline">
     <div>
-      <h3 class="list-title">Todo List</h3>
-      <ul>
-        <li v-for="(todo, index) in todo_list" :key="todo.id" class="list-item">
-          <input
-            type="checkbox"
-            v-model="todo.value"
-            @change="checkFinished(index, todo.value)"
-          />
-          <span :hidden="todo.inEdit">{{ todo.title }}</span>
-          <input
-            type="text"
-            v-model="todo.title"
-            :hidden="!todo.inEdit"
-            size="15"
-          />
-          <button @click="editTodo(index)">修改</button>
-          <input type="button" value="刪除" @click="removeTodo(index)" />
-        </li>
-      </ul>
+      <input type="text" />
+      <input type="button" value="新增" />
     </div>
     <div>
-      <h3 class="list-title">Done List</h3>
-      <ul>
-        <li v-for="done in done_list" :key="done.id" class="list-item">
-          <input type="checkbox" checked="true" />
-          {{ done.title }}
-        </li>
-      </ul>
+      <div>
+        <h3 class="list-title">Todo List</h3>
+        <ul>
+          <li
+            v-for="(todo, index) in todo_list"
+            :key="todo.id"
+            class="list-item"
+          >
+            <input type="checkbox" v-model="todo.doing" />
+            <span>{{ todo.title }}</span>
+            <icon
+              v-show="!todo.doing"
+              name="baseline-play_circle_outline-24px"
+              :scale="80"
+              id="icon"
+              @click.native="startToDo(index)"
+            />
+            <icon
+              v-show="todo.doing"
+              name="baseline-pause_circle_outline-24px"
+              :scale="80"
+              id="icon"
+              @click.native="stopToDo(index)"
+            />
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="list-title">Done List</h3>
+        <ul>
+          <li v-for="done in done_list" :key="done.id" class="list-item">
+            <input type="checkbox" checked="true" />
+            {{ done.title }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -38,12 +50,25 @@ export default {
   name: "ToDoList",
   data: () => ({
     todo_value: "",
+    anyThingDoing: false,
     todo_list: [
-      { inEdit: false, title: "Vue.js 2.0" },
-      { inEdit: false, title: "Vuex 2.0" },
-      { inEdit: false, title: "Webpack 2.0" }
+      {
+        title: "THE FIRST THING TO DO",
+        doing: false,
+        remainTime: 25
+      },
+      {
+        title: "THE SECOND THING TO DO",
+        doing: false,
+        remainTime: 25
+      },
+      {
+        title: "THE THIRD THING TO DO",
+        doing: false,
+        remainTime: 25
+      }
     ],
-    done_list: [{ title: "Vue-router 2.0" }]
+    done_list: [{ title: "THE FOURTH THING TO DO" }]
   }),
   methods: {
     addToList: function(value) {
@@ -55,7 +80,23 @@ export default {
         this.done_list.push(this.todo_list[id]);
         this.todo_list.splice(id, 1);
       }
+    },
+    startToDo: function(index) {
+      let listItem = this.todo_list[index];
+      console.log(listItem, this.todo_list[index]);
+      listItem.doing = true;
+      this.$emit("onItemClicked", listItem.title, listItem.remainTime);
+    },
+    stopToDo: function(index) {
+      let listItem = this.todo_list[index];
+      listItem.doing = false;
     }
   }
 };
 </script>
+
+<style scoped>
+#icon {
+  margin-left: 10px;
+}
+</style>
